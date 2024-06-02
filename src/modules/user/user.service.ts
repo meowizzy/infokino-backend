@@ -15,16 +15,18 @@ export class UserService {
         return await this.userModel.findById(id).exec();
     }
 
-    async isExist(email: string): Promise<boolean> {
-        const user = await this.userModel.findOne({ email });
+    async isExist(query: string): Promise<boolean> {
+        const user = await this.userModel.findOne({ query });
 
         return !!user;
     }
 
     async create(userDto: CreateUserDto): Promise<CreateUserDto> {
-        if (await this.isExist(userDto.email)) {
+        const isExist = await this.isExist(userDto.email) || await this.isExist(userDto.username);
+
+        if (isExist) {
             throw new HttpException(
-                { message: "User with this email already exists", status: HttpStatus.BAD_REQUEST },
+                { message: "User with this username or email already exists", status: HttpStatus.BAD_REQUEST },
                 HttpStatus.BAD_REQUEST
             );
         }
