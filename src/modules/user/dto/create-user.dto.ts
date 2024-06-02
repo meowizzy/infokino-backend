@@ -6,7 +6,7 @@ export class CreateUserDto {
     @IsEmail()
     readonly email: string;
 
-    @ApiProperty({ example: "Username", description: "Юзернейм", uniqueItems: true })
+    @ApiProperty({ example: "Username", description: "Юзернейм" })
     @IsNotEmpty()
     readonly username: string;
 
