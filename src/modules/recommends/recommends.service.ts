@@ -1,7 +1,7 @@
 import { Injectable, UseGuards } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { JwtAuthGuard } from "../../guards/auth-guard";
+import { JwtAuthGuard } from "../../guards/auth-guard/auth-guard";
 import { SetRecommendsDto } from "./dto/set-recommends.dto";
 import { Recommends } from "./models/recommends.schema";
 

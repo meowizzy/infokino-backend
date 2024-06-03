@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, ObjectId } from "mongoose";
 import { ApiProperty } from "@nestjs/swagger";
+import { Role } from "../../../guards/role/role.enum";
 
 export type UserDocument = User & Document;
 
@@ -24,6 +25,10 @@ export class User extends Document {
     @ApiProperty({ example: "https://test.site/example_pic.png", description: "Ссылка на изображение" })
     @Prop({ nullable: true })
         avatar: string;
+
+    @ApiProperty({ example: Role.USER, description: "Роль пользователя" })
+    @Prop({ default: Role.USER })
+        role: Role.ADMIN | Role.USER;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

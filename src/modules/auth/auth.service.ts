@@ -30,7 +30,8 @@ export class AuthService {
 
         return this.tokenService.generateTokens({
             userId: newUser.id,
-            email: newUser.email
+            email: newUser.email,
+            role: newUser.role
         });
     }
 
@@ -55,7 +56,8 @@ export class AuthService {
 
         return this.tokenService.generateTokens({
             userId: existUser.id,
-            email: existUser.email
+            email: existUser.email,
+            role: existUser.role
         });
     }
 }

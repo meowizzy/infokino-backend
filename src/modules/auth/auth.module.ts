@@ -7,8 +7,8 @@ import { JwtStrategy } from "../../strategy";
 
 @Module({
     imports: [
+        TokenModule,
         UserModule,
-        TokenModule
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy]
