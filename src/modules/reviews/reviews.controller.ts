@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from "./dto/create-review.dto";
 import { UpdateReviewDto } from "./dto/update-review.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Review } from "./reviews.model";
+import { JwtAuthGuard } from "../../guards/auth-guard";
 
 @ApiTags("Комментарии")
 @Controller("reviews")
@@ -17,6 +18,7 @@ export class ReviewsController {
         return this.reviewsService.getAll(movieId);
     }
 
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: "Создание комментария" })
     @ApiResponse({ status: HttpStatus.CREATED, type: [Review] })
     @Post("create")
@@ -25,6 +27,7 @@ export class ReviewsController {
         return this.reviewsService.create(createReviewDto);
     }
 
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: "Обновление комментария" })
     @ApiResponse({ status: HttpStatus.OK, type: [Review] })
     @Patch(":reviewId")
@@ -33,6 +36,7 @@ export class ReviewsController {
         return this.reviewsService.update(reviewId, updateReviewDto);
     }
 
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: "Удаление комментария" })
     @ApiResponse({ status: HttpStatus.OK, type: [Review] })
     @Delete(":reviewId")

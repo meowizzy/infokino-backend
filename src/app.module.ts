@@ -5,6 +5,8 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UserModule } from "./modules/user/user.module";
 import { ReviewsModule } from "./modules/reviews/reviews.module";
 import { TokenModule } from "./modules/token/token.module";
+import { FavoritesModule } from "./modules/favorites/favorites.module";
+import { RecommendsModule } from "./modules/recommends/recommends.module";
 
 @Module({
     controllers: [],
@@ -18,6 +20,8 @@ import { TokenModule } from "./modules/token/token.module";
         UserModule,
         ReviewsModule,
         TokenModule,
+        FavoritesModule,
+        RecommendsModule
     ],
 })
 export class AppModule {}
