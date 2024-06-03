@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
+import { AppErrors, ErrorsType } from "#src/common/errors";
 import { UserService } from "../user/user.service";
 import { CreateUserDto } from "../user/dto/create-user.dto";
-import { AppErrors, ErrorsType } from "../../common/errors";
 import { SignInDto } from "./dto/sign-in.dto";
 import { TokenService } from "../token/token.service";
 import { Tokens } from "../token/token.model";

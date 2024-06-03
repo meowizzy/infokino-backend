@@ -1,12 +1,22 @@
-import { Controller, Delete, Get, HttpStatus, Param, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import {
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Param,
+    Req,
+    UnauthorizedException,
+    UseGuards
+} from "@nestjs/common";
 import { Request } from "express";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { User, UserDocument } from "./schemas/user.schema";
-import { JwtAuthGuard } from "../../guards/auth-guard/auth-guard";
-import { RoleGuard } from "../../guards/role/role.guard";
-import { Roles } from "../../guards/role/role.decorator";
-import { Role } from "../../guards/role/role.enum";
+import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
+import { RoleGuard } from "#src/guards/role-guard/role.guard";
+import { Roles } from "#src/guards/role-guard/role.decorator";
+import { Role } from "#src/guards/role-guard/role.enum";
 
 @ApiTags("Пользователь")
 @Controller("users")
@@ -17,8 +27,9 @@ export class UserController {
 
     @ApiOperation({ summary: "Профиль пользователя" })
     @ApiResponse({ status: HttpStatus.OK, type: User })
-    @Get("/profile")
+    @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
+    @Get("/profile")
     async profile(@Req() { headers: { authorization } }: Request): Promise<UserDocument> {
         if (!authorization) throw new UnauthorizedException();
 
@@ -26,9 +37,19 @@ export class UserController {
 
         return await this.userService.getProfile(token);
     }
+    @ApiOperation({ summary: "Список всех пользователей (ADMIN)" })
+    @ApiResponse({ status: HttpStatus.OK, type: [User] })
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(RoleGuard)
+    @Roles(Role.ADMIN)
+    @Get("/list")
+    async list(): Promise<UserDocument[]> {
+        return await this.userService.getAll();
+    }
 
     @ApiOperation({ summary: "Удаление пользователя (ADMIN)" })
     @ApiResponse({ status: HttpStatus.OK, type: User })
+    @HttpCode(HttpStatus.OK)
     @UseGuards(RoleGuard)
     @Roles(Role.ADMIN)
     @Delete(":userId")

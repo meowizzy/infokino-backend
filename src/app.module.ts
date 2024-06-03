@@ -7,7 +7,7 @@ import { ReviewsModule } from "./modules/reviews/reviews.module";
 import { TokenModule } from "./modules/token/token.module";
 import { FavoritesModule } from "./modules/favorites/favorites.module";
 import { RecommendsModule } from "./modules/recommends/recommends.module";
-import { RoleGuard } from "./guards/role/role.guard";
+import { RoleGuard } from "./guards/role-guard/role.guard";
 import { JwtModule } from "@nestjs/jwt";
 
 @Module({

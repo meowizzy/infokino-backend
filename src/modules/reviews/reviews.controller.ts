@@ -1,13 +1,14 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
+import { RoleGuard } from "#src/guards/role-guard/role.guard";
+import { Roles } from "#src/guards/role-guard/role.decorator";
+import { Role } from "#src/guards/role-guard/role.enum";
 import { ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from "./dto/create-review.dto";
 import { UpdateReviewDto } from "./dto/update-review.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Review } from "./reviews.model";
-import { JwtAuthGuard } from "../../guards/auth-guard/auth-guard";
-import { RoleGuard } from "../../guards/role/role.guard";
-import { Roles } from "../../guards/role/role.decorator";
-import { Role } from "../../guards/role/role.enum";
+
 
 @ApiTags("Комментарии")
 @Controller("reviews")

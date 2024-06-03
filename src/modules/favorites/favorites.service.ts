@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { AppErrors, ErrorsType } from "#src/common/errors";
 import { Favorite } from "./schemas";
-import { AppErrors, ErrorsType } from "../../common/errors";
+
 
 
 @Injectable()

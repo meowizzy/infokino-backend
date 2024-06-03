@@ -20,6 +20,10 @@ export class UserService {
         });
     }
 
+    async getAll(): Promise<UserDocument[]> {
+        return await this.userModel.find().select("-password").exec();
+    }
+
     async getProfile(token: string): Promise<UserDocument> {
         const { userId } = await this.jwtService.decode(token);
 

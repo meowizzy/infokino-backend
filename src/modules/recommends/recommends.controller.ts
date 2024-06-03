@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, Put, UseGuards } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
 import { RecommendsService } from "./recommends.service";
 import { Recommends } from "./models/recommends.schema";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../../guards/auth-guard/auth-guard";
 
 @UseGuards(JwtAuthGuard)
 @ApiTags("Рекомендации пользователя")

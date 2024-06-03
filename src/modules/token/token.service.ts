@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { Role } from "#src/guards/role-guard/role.enum";
 import { Tokens } from "./token.model";
-import { Role } from "../../guards/role/role.enum";
+
 
 @Injectable()
 export class TokenService {
