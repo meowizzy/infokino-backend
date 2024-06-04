@@ -4,11 +4,15 @@ import { Model } from "mongoose";
 import { Review } from "./reviews.model";
 import { CreateReviewDto } from "./dto/create-review.dto";
 import { UpdateReviewDto } from "./dto/update-review.dto";
+import { UserService } from "../user/user.service";
 
 
 @Injectable()
 export class ReviewsService {
-    constructor(@InjectModel(Review.name) private readonly reviewModel: Model<Review>) {}
+    constructor(
+        @InjectModel(Review.name) private readonly reviewModel: Model<Review>,
+        private readonly userService: UserService
+    ) {}
 
     async getAll(movieId: number) {
         const reviews = await this.reviewModel.find({ movieId }).exec();
@@ -16,8 +20,15 @@ export class ReviewsService {
         return reviews;
     }
 
-    async create(createReviewDto: CreateReviewDto) {
-        const review = await this.reviewModel.create(createReviewDto);
+    async create(userId: string, createReviewDto: CreateReviewDto) {
+        const user = await this.userService.findById(userId);
+
+        const review = await this.reviewModel.create({
+            ...createReviewDto,
+            userId: userId,
+            username: user.username,
+            avatar: user.avatar || null
+        });
 
         return review;
     }

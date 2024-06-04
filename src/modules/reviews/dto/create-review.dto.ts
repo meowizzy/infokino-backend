@@ -14,16 +14,4 @@ export class CreateReviewDto {
     @IsNotEmpty()
     @IsNumber()
     readonly rating: number;
-
-    @ApiProperty({ example: "Username", description: "Комментатор" })
-    @IsNotEmpty()
-    readonly username: string;
-
-    @ApiProperty({ example: "123456", description: "ID комментатора" })
-    @IsNotEmpty()
-    readonly userId: string;
-
-    @ApiProperty({ example: "https://test.site/example_pic.png", description: "Изображение" })
-    @IsNotEmpty()
-    readonly avatar: string;
 }

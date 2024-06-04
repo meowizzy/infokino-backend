@@ -1,8 +1,10 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, Put, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
+import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
 import { RecommendsService } from "./recommends.service";
 import { Recommends } from "./models/recommends.schema";
+import { SetRecommendsDto } from "./dto/set-recommends.dto";
 
 @UseGuards(JwtAuthGuard)
 @ApiTags("Рекомендации пользователя")
@@ -10,14 +12,11 @@ import { Recommends } from "./models/recommends.schema";
 export class RecommendsController {
     constructor(private readonly recommendsService: RecommendsService) {}
 
-    @Put("/:userId")
+    @Put()
     @ApiOperation({ summary: "Изменение списка жанров" })
     @ApiResponse({ status: HttpStatus.OK, type: [Recommends] })
     @HttpCode(HttpStatus.OK)
-    async setRecommends(@Param("userId") userId: string, @Body() setRecommendsDto: string[]): Promise<Recommends> {
-        return this.recommendsService.setItems({
-            userId,
-            items: setRecommendsDto
-        });
+    async setRecommends(@GetCurrentUserId() userId: string, @Body() dto: SetRecommendsDto): Promise<Recommends> {
+        return this.recommendsService.setItems(userId, dto);
     }
 }

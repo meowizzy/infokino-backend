@@ -8,7 +8,7 @@ import { CreateReviewDto } from "./dto/create-review.dto";
 import { UpdateReviewDto } from "./dto/update-review.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Review } from "./reviews.model";
-
+import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
 
 @ApiTags("Комментарии")
 @Controller("reviews")
@@ -27,11 +27,11 @@ export class ReviewsController {
     @ApiResponse({ status: HttpStatus.CREATED, type: [Review] })
     @Post("create")
     @HttpCode(HttpStatus.CREATED)
-    async create(@Body() createReviewDto: CreateReviewDto) {
-        return this.reviewsService.create(createReviewDto);
+    async create(@GetCurrentUserId() userId: string, @Body() createReviewDto: CreateReviewDto) {
+        return this.reviewsService.create(userId, createReviewDto);
     }
 
-    @UseGuards(RoleGuard)
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: "Обновление комментария" })
     @ApiResponse({ status: HttpStatus.OK, type: [Review] })
@@ -41,7 +41,7 @@ export class ReviewsController {
         return this.reviewsService.update(reviewId, updateReviewDto);
     }
 
-    @UseGuards(RoleGuard)
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: "Удаление комментария" })
     @ApiResponse({ status: HttpStatus.OK, type: [Review] })

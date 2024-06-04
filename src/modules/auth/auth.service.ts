@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { AppErrors, ErrorsType } from "#src/common/errors";
 import { UserService } from "../user/user.service";
@@ -6,6 +6,8 @@ import { CreateUserDto } from "../user/dto/create-user.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { TokenService } from "../token/token.service";
 import { Tokens } from "../token/token.model";
+import { JwtService } from "@nestjs/jwt";
+import * as process from "node:process";
 
 
 @Injectable()
@@ -13,6 +15,7 @@ export class AuthService {
     constructor(
         private readonly userService: UserService,
         private readonly tokenService: TokenService,
+        private readonly jwtService: JwtService,
     ) {}
 
     async signUp(userDto: CreateUserDto): Promise<Tokens> {
@@ -59,5 +62,25 @@ export class AuthService {
             email: existUser.email,
             role: existUser.role
         });
+    }
+
+    async refresh(refreshToken: string) {
+        try {
+            const {
+                userId,
+                email,
+                role
+            } = this.jwtService.verify(refreshToken, {
+                secret: process.env.JWT_REFRESH_TOKEN_SECRET
+            });
+
+            return this.tokenService.generateTokens({
+                userId,
+                email,
+                role
+            });
+        } catch(err) {
+            throw new UnauthorizedException();
+        }
     }
 }

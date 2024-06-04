@@ -38,6 +38,10 @@ export class UserService {
         return this.userModel.findOne({ [key]: emailOrUsername }).exec();
     }
 
+    async findById(id: string): Promise<UserDocument> {
+        return this.userModel.findById(id).exec();
+    }
+
     async hashPassword(password: string): Promise<string> {
         return bcrypt.hash(password, 10);
     }
