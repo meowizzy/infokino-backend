@@ -14,6 +14,16 @@ async function start() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("/api/docs", app, document);
     app.useGlobalPipes(new ValidationPipe());
+
+    const corsWhitelist = [
+        'http://localhost:3000',
+        'https://infokino.vercel.app/',
+    ];
+
+    app.enableCors({
+        credentials: true,
+        origin: corsWhitelist,
+    });
     await app.listen(PORT);
 }
 
