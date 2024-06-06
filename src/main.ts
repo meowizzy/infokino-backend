@@ -17,7 +17,7 @@ async function start() {
 
     const corsWhitelist = [
         'http://localhost:3000',
-        'https://infokino.vercel.app/',
+        'https://infokino.vercel.app',
     ];
 
     app.enableCors({
