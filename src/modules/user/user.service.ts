@@ -34,7 +34,6 @@ export class UserService {
         if (user.avatar) {
             fs.unlink("./upload/avatars/" + avatarParts[avatarParts.length-1], (err) => {
                 if (err) throw err;
-                console.log("IMAGE DELTED");
             });
 
             user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
