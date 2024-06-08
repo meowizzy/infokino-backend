@@ -31,17 +31,8 @@ export class UserService {
         const user = await this.userModel.findById(id);
         const avatarParts = user.avatar.split("/");
 
-        if (user.avatar) {
-            fs.unlink("./upload/avatars/" + avatarParts[avatarParts.length-1], (err) => {
-                if (err) throw err;
-            });
-
-            user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
-            user.save();
-        } else {
-            user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
-            user.save();
-        }
+        user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
+        user.save();
 
         return { avatar: user.avatar };
     }
