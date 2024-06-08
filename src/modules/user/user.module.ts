@@ -10,7 +10,7 @@ import { JwtModule } from "@nestjs/jwt";
     providers: [UserService],
     imports: [
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-        JwtModule
+        JwtModule,
     ],
     exports: [
         UserService

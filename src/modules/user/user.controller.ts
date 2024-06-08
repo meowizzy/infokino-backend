@@ -5,18 +5,27 @@ import {
     HttpCode,
     HttpStatus,
     Param,
+    ParseFilePipeBuilder,
+    Post,
     Req,
     UnauthorizedException,
-    UseGuards
+    UploadedFile,
+    UseGuards,
+    UseInterceptors
 } from "@nestjs/common";
-import { Request } from "express";
-import {ApiHeader, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Request, Response } from "express";
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
 import { UserService } from "./user.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
 import { RoleGuard } from "#src/guards/role-guard/role.guard";
 import { Roles } from "#src/guards/role-guard/role.decorator";
 import { Role } from "#src/guards/role-guard/role.enum";
+import { MimeType } from "#src/common/mime-type.enum";
+import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
+import * as path from "path";
 
 @ApiTags("Пользователь")
 @Controller("users")
@@ -58,5 +67,36 @@ export class UserController {
     @Delete(":userId")
     async remove(@Param("userId") userId: string): Promise<UserDocument> {
         return await this.userService.remove(userId);
+    }
+
+    @UseInterceptors(FileInterceptor("avatar", {
+        storage: diskStorage({
+            destination: "./uploads",
+            filename: (req, file, callback) => {
+                const [name, ext] = file.originalname.split(".");
+
+                callback(null, `${name}.${Date.now()}.${ext}`);
+            }
+        })
+    }))
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    @Post("/profile/avatar")
+    async setAvatar(
+        @GetCurrentUserId() userId: string,
+        @UploadedFile(
+            new ParseFilePipeBuilder()
+                .addFileTypeValidator({
+                    fileType: MimeType.IMAGE_REGEX,
+                })
+                .addMaxSizeValidator({
+                    maxSize: MimeType.MAX_SIZE
+                })
+                .build({
+                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+                }),
+        ) file: Express.Multer.File
+    ) {
+        return await this.userService.setAvatar(userId, file);
     }
 }
