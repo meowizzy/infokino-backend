@@ -10,5 +10,5 @@ type TMimeType = {
 
 export const MimeType: TMimeType = {
     [EMimetype.IMAGE_REGEX]: /(jpg|jpeg|png|webp)$/,
-    [EMimetype.MAX_SIZE]: 1000
+    [EMimetype.MAX_SIZE]: 3000
 }
