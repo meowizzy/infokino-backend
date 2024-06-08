@@ -29,7 +29,7 @@ export class UserService {
     async setAvatar(id: string, file: Express.Multer.File): Promise<{ avatar: string }>   {
         const user = await this.userModel.findById(id);
 
-        user.avatar = `${process.env.API_HOST}"upload/avatars/${file.filename}`;
+        user.avatar = `${process.env.API_HOST}upload/avatars/${file.filename}`;
         user.save();
 
         return { avatar: user.avatar };
