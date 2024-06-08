@@ -23,13 +23,13 @@ export class UserService {
     }
 
     async getAvatar(filename: string, res: Response) {
-        return res.sendFile(`${process.cwd()}upload/avatars/${filename}`);
+        return res.sendFile(`${process.cwd()}/upload/avatars/${filename}`);
     }
 
     async setAvatar(id: string, file: Express.Multer.File): Promise<{ avatar: string }>   {
         const user = await this.userModel.findById(id);
 
-        user.avatar = process.cwd() + "upload/avatars/" + file.filename;
+        user.avatar = process.cwd() + "/upload/avatars/" + file.filename;
         user.save();
 
         return { avatar: user.avatar };
