@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import { JwtService } from "@nestjs/jwt";
 import { Response } from "express";
 import * as bcrypt from "bcrypt";
-import * as path from "path";
+import * as fs from "fs";
 import { User, UserDocument } from "./schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
 
@@ -29,9 +29,20 @@ export class UserService {
 
     async setAvatar(id: string, file: Express.Multer.File): Promise<{ avatar: string }>   {
         const user = await this.userModel.findById(id);
+        const avatarParts = user.avatar.split("/");
 
-        user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
-        user.save();
+        if (user.avatar) {
+            fs.unlink("./upload/avatars/" + avatarParts[avatarParts.length-1], (err) => {
+                if (err) throw err;
+                console.log("IMAGE DELTED");
+            });
+
+            user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
+            user.save();
+        } else {
+            user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
+            user.save();
+        }
 
         return { avatar: user.avatar };
     }
