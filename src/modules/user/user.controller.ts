@@ -8,6 +8,7 @@ import {
     ParseFilePipeBuilder,
     Post,
     Req,
+    Res,
     UnauthorizedException,
     UploadedFile,
     UseGuards,
@@ -25,7 +26,6 @@ import { Roles } from "#src/guards/role-guard/role.decorator";
 import { Role } from "#src/guards/role-guard/role.enum";
 import { MimeType } from "#src/common/mime-type.enum";
 import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
-import * as path from "path";
 
 @ApiTags("Пользователь")
 @Controller("users")
@@ -69,9 +69,15 @@ export class UserController {
         return await this.userService.remove(userId);
     }
 
+    @Get("/profile/avatar/:filename")
+    async getAvatar(@Param("filename") filename: string, @Res() res: Response) {
+        return this.userService.getAvatar(filename, res);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor("avatar", {
         storage: diskStorage({
-            destination: "./uploads",
+            destination: "./upload/avatars",
             filename: (req, file, callback) => {
                 const [name, ext] = file.originalname.split(".");
 
@@ -79,7 +85,6 @@ export class UserController {
             }
         })
     }))
-    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @Post("/profile/avatar")
     async setAvatar(

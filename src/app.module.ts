@@ -11,7 +11,6 @@ import { RecommendsModule } from "./modules/recommends/recommends.module";
 import { RoleGuard } from "./guards/role-guard/role.guard";
 import { MulterModule } from "@nestjs/platform-express";
 
-
 @Module({
     controllers: [],
     providers: [
@@ -25,9 +24,6 @@ import { MulterModule } from "@nestjs/platform-express";
             isGlobal: true,
         }),
         MongooseModule.forRoot(process.env.MONGO_DB_URI),
-        MulterModule.register({
-            dest: './uploads',
-        }),
         AuthModule,
         UserModule,
         ReviewsModule,

@@ -27,7 +27,6 @@ async function start() {
         credentials: true,
         origin: corsWhitelist,
     });
-    app.useStaticAssets(path.join(__dirname, "../uploads/"));
 
     await app.listen(PORT);
 }
