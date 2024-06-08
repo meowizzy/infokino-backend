@@ -4,6 +4,7 @@ import { Model } from "mongoose";
 import { JwtService } from "@nestjs/jwt";
 import { Response } from "express";
 import * as bcrypt from "bcrypt";
+import * as path from "path";
 import { User, UserDocument } from "./schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
 
@@ -23,13 +24,13 @@ export class UserService {
     }
 
     async getAvatar(filename: string, res: Response) {
-        return res.sendFile(`${process.env.API_HOST}users/profile/upload/avatars/${filename}`);
+        return res.sendFile(`${process.cwd()}/upload/avatars/${filename}`);
     }
 
     async setAvatar(id: string, file: Express.Multer.File): Promise<{ avatar: string }>   {
         const user = await this.userModel.findById(id);
 
-        user.avatar = `${process.env.API_HOST}users/profile/upload/avatars/${file.filename}`;
+        user.avatar = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
         user.save();
 
         return { avatar: user.avatar };
