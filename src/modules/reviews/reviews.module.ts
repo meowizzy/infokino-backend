@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ReviewsController } from "./reviews.controller";
@@ -9,11 +9,12 @@ import { UserModule } from "../user/user.module";
 
 @Module({
     controllers: [ReviewsController],
-    providers: [ReviewsService],
     imports: [
         MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
         JwtModule,
         UserModule
     ],
+    providers: [ReviewsService],
+    exports: [ReviewsService],
 })
 export class ReviewsModule {}

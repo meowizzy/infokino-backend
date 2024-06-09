@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { JwtService } from "@nestjs/jwt";
@@ -6,14 +6,12 @@ import { Response } from "express";
 import * as bcrypt from "bcrypt";
 import { User, UserDocument } from "./schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { Review } from "../reviews/reviews.model";
 
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
-        @InjectModel(Review.name) private reviewModel: Model<Review>,
         private readonly jwtService: JwtService
     ) {}
 
@@ -30,15 +28,10 @@ export class UserService {
 
     async setAvatar(id: string, file: Express.Multer.File): Promise<{ avatar: string }>   {
         const user = await this.userModel.findById(id);
-        const reviewDocument = await this.reviewModel.findOne({ userId: id });
-        const avatarParts = user.avatar.split("/");
         const avatarPath = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
 
         user.avatar = avatarPath;
         user.save();
-
-        reviewDocument.avatar = avatarPath;
-        reviewDocument.save();
 
         return { avatar: user.avatar };
     }

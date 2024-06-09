@@ -15,11 +15,12 @@ import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
 export class ReviewsController {
     constructor(private readonly reviewsService: ReviewsService) {}
 
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: "Список комментариев к фильму" })
     @ApiResponse({ status: HttpStatus.OK, type: [Review] })
     @Get(":movieId")
-    async all(@Param("movieId") movieId: number) {
-        return this.reviewsService.getAll(movieId);
+    async all(@GetCurrentUserId() userId: string, @Param("movieId") movieId: number) {
+        return this.reviewsService.getAll(userId, movieId);
     }
 
     @UseGuards(JwtAuthGuard)
