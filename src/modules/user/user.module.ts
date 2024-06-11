@@ -4,7 +4,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { UserService } from "./user.service";
 import { User, UserSchema } from "./schemas/user.schema";
 import { UserController } from "./user.controller";
-import { ReviewsModule } from "../reviews/reviews.module";
+import { FirebaseModule } from "#src/common/firebase/firebase.module";
 
 @Module({
     controllers: [UserController],
@@ -12,7 +12,8 @@ import { ReviewsModule } from "../reviews/reviews.module";
     exports: [UserService],
     imports: [
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-        JwtModule
+        JwtModule,
+        FirebaseModule
     ],
 })
 export class UserModule {}

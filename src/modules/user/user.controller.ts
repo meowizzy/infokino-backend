@@ -75,16 +75,7 @@ export class UserController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor("avatar", {
-        storage: diskStorage({
-            destination: "./upload/avatars",
-            filename: (req, file, callback) => {
-                const [name, ext] = file.originalname.split(".");
-
-                callback(null, `${name}.${Date.now()}.${ext}`);
-            }
-        })
-    }))
+    @UseInterceptors(FileInterceptor("avatar"))
     @HttpCode(HttpStatus.OK)
     @Post("/profile/avatar")
     async setAvatar(

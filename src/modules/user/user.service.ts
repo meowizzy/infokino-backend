@@ -6,12 +6,16 @@ import { Response } from "express";
 import * as bcrypt from "bcrypt";
 import { User, UserDocument } from "./schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { error, log } from "console";
+import { FirebaseService } from "#src/common/firebase/firebase.service";
+
 
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
+        private readonly firebaseService: FirebaseService,
         private readonly jwtService: JwtService
     ) {}
 
@@ -26,14 +30,38 @@ export class UserService {
         return res.sendFile(`${process.cwd()}/upload/avatars/${filename}`);
     }
 
-    async setAvatar(id: string, file: Express.Multer.File): Promise<{ avatar: string }>   {
-        const user = await this.userModel.findById(id);
-        const avatarPath = `${process.env.API_HOST}users/profile/avatar/${file.filename}`;
+    async setAvatar(id: string, file: Express.Multer.File)   {
+        const storage = this.firebaseService.getStorageInstance();
+        const bucket = storage.bucket();
+        
+        const fileName = `${Date.now()}_${file.originalname}`;
+        const fileUpload = bucket.file(fileName);
+        const stream = fileUpload.createWriteStream({
+           metadata: {
+            contentType: file.mimetype
+           } 
+        });
 
-        user.avatar = avatarPath;
-        user.save();
+        return new Promise((resolve, reject) => {
+            stream.on("error", (error) => {
+                reject(error);
+            });
+            
+            stream.on("finish", async () => {
+                const imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
 
-        return { avatar: user.avatar };
+                await fileUpload.makePublic();
+
+                const user = await this.userModel.findById(id);
+        
+                user.avatar = imageUrl;
+                user.save();
+            
+                resolve({ avatar: user.avatar });
+            });
+
+            stream.end(file.buffer);
+        });
     }
 
     async remove(id: string): Promise<UserDocument> {
