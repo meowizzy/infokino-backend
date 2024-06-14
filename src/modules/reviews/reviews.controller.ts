@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Param,
+    Patch,
+    Post,
+    Put,
+    UseGuards
+} from "@nestjs/common";
 import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
 import { RoleGuard } from "#src/guards/role-guard/role.guard";
 import { Roles } from "#src/guards/role-guard/role.decorator";
@@ -36,7 +48,7 @@ export class ReviewsController {
     @Roles(Role.ADMIN)
     @ApiOperation({ summary: "Обновление комментария" })
     @ApiResponse({ status: HttpStatus.OK, type: [Review] })
-    @Patch(":reviewId")
+    @Put(":reviewId")
     @HttpCode(HttpStatus.OK)
     async update(@Param("reviewId") reviewId: string, @Body() updateReviewDto: UpdateReviewDto) {
         return this.reviewsService.update(reviewId, updateReviewDto);
