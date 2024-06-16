@@ -24,7 +24,8 @@ export class ReviewsService {
             {
                 $set: {
                     avatar: user.avatar,
-                    username: user.username
+                    username: user.username,
+                    role: user.role,
                 }
             }
         );

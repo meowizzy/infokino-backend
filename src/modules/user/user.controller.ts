@@ -49,6 +49,7 @@ export class UserController {
 
         return await this.userService.getProfile(token);
     }
+
     @ApiOperation({ summary: "Список всех пользователей (ADMIN)" })
     @ApiResponse({ status: HttpStatus.OK, type: [User] })
     @UseGuards(JwtAuthGuard, RoleGuard)
