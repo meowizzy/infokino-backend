@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 import { ApiProperty } from "@nestjs/swagger";
+import {Role} from "#src/guards/role-guard/role.enum";
 
 export type ReviewDocument = Review & Document;
 
@@ -32,6 +33,10 @@ export class Review extends Document {
     @ApiProperty({ example: "https://test.site/example_pic.png", description: "Изображение" })
     @Prop({ nullable: true })
         avatar: string;
+
+    @ApiProperty({ example: "USER", description: "Роль пользователя" })
+    @Prop({ required: true })
+        role: Role.USER;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);
