@@ -1,11 +1,10 @@
-import {Inject, Injectable, forwardRef } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Review } from "./reviews.model";
 import { CreateReviewDto } from "./dto/create-review.dto";
 import { UpdateReviewDto } from "./dto/update-review.dto";
 import { UserService } from "../user/user.service";
-import { UserModule } from "../user/user.module";
 
 
 @Injectable()
@@ -42,7 +41,8 @@ export class ReviewsService {
             ...createReviewDto,
             userId: userId,
             username: user.username,
-            avatar: user.avatar || null
+            avatar: user.avatar || null,
+            role: user.role
         });
 
         return review;

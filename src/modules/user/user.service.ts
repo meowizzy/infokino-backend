@@ -31,32 +31,38 @@ export class UserService {
     }
 
     async setAvatar(id: string, file: Express.Multer.File)   {
+        const user = await this.userModel.findById(id);
         const storage = this.firebaseService.getStorageInstance();
         const bucket = storage.bucket();
-        
         const fileName = `${Date.now()}_${file.originalname}`;
+
+        if (user.avatar) {
+            const avatarUrlParts = user.avatar.split("/");
+            await bucket.deleteFiles({
+                prefix: avatarUrlParts[avatarUrlParts.length - 1]
+            });
+        }
+
         const fileUpload = bucket.file(fileName);
         const stream = fileUpload.createWriteStream({
            metadata: {
             contentType: file.mimetype
-           } 
+           }
         });
 
         return new Promise((resolve, reject) => {
             stream.on("error", (error) => {
                 reject(error);
             });
-            
+
             stream.on("finish", async () => {
                 const imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
 
                 await fileUpload.makePublic();
 
-                const user = await this.userModel.findById(id);
-        
                 user.avatar = imageUrl;
                 user.save();
-            
+
                 resolve({ avatar: user.avatar });
             });
 
