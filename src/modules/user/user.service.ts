@@ -2,11 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { JwtService } from "@nestjs/jwt";
-import { Response } from "express";
 import * as bcrypt from "bcrypt";
+import { FirebaseService } from "#src/common/firebase/firebase.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { FirebaseService } from "#src/common/firebase/firebase.service";
+
 
 @Injectable()
 export class UserService {
@@ -23,28 +23,20 @@ export class UserService {
         });
     }
 
-    async getAvatar(filename: string, res: Response) {
-        return res.sendFile(`${process.cwd()}/upload/avatars/${filename}`);
-    }
-
     async setAvatar(id: string, file: Express.Multer.File)   {
         const user = await this.userModel.findById(id);
-        const storage = this.firebaseService.getStorageInstance();
-        const bucket = storage.bucket();
+        const bucket = this.firebaseService.getStorageBucket();
         const fileName = `${Date.now()}_${file.originalname}`;
 
         if (user.avatar) {
-            const avatarUrlParts = user.avatar.split("/");
-            await bucket.deleteFiles({
-                prefix: avatarUrlParts[avatarUrlParts.length - 1]
-            });
+            await this.removeAvatar(user.avatar);
         }
 
         const fileUpload = bucket.file(fileName);
         const stream = fileUpload.createWriteStream({
-           metadata: {
-            contentType: file.mimetype
-           }
+            metadata: {
+                contentType: file.mimetype
+            }
         });
 
         return new Promise((resolve, reject) => {
@@ -58,7 +50,8 @@ export class UserService {
                 await fileUpload.makePublic();
 
                 user.avatar = imageUrl;
-                user.save();
+
+                await user.save();
 
                 resolve({ avatar: user.avatar });
             });
@@ -67,7 +60,22 @@ export class UserService {
         });
     }
 
+    async removeAvatar(avatar: string) {
+        const avatarParts = avatar.split("/");
+        const filename = avatarParts[avatarParts.length - 1];
+
+        await this.firebaseService.getStorageBucket().deleteFiles({
+            prefix: filename
+        });
+    }
+
     async remove(id: string): Promise<UserDocument> {
+        const user = await this.userModel.findById(id).exec();
+
+        if (user.avatar) {
+            await this.removeAvatar(user.avatar);
+        }
+
         return await this.userModel.findByIdAndDelete(id).select("-password").exec();
     }
 

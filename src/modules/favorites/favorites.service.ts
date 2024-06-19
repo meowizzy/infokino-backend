@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppErrors, ErrorsType } from "#src/common/errors";
-import { UpdateFavoriteDto } from "#src/modules/favorites/dto/update-favorite.dto";
 import { Favorite } from "#src/modules/favorites/schemas";
 
 @Injectable()

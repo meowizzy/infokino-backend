@@ -4,7 +4,6 @@ import * as admin from "firebase-admin";
 @Injectable()
 export class FirebaseService {
     private readonly storage: admin.storage.Storage;
-
     constructor() {
         const { privateKey } = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
         const serviceAccountConfig = {
@@ -31,5 +30,9 @@ export class FirebaseService {
 
     getStorageInstance(): admin.storage.Storage {
         return this.storage;
+    }
+
+    getStorageBucket() {
+        return this.getStorageInstance().bucket();
     }
 }
