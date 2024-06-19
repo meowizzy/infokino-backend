@@ -27,6 +27,6 @@ export class RecommendsService {
     }
 
     async getItems(userId: string): Promise<RecommendsDocument> {
-        return await this.recommendModel.findById(userId).exec();
+        return await this.recommendModel.findOne({ userId }).exec();
     }
 }

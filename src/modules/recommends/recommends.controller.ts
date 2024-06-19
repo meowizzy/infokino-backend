@@ -25,6 +25,7 @@ export class RecommendsController {
     @ApiResponse({ status: HttpStatus.OK, type: [Recommends] })
     @HttpCode(HttpStatus.OK)
     async getRecommends(@GetCurrentUserId() userId: string) {
+        console.log(userId);
         return this.recommendsService.getItems(userId);
     }
 }
