@@ -6,7 +6,7 @@ import {
     HttpStatus,
     Param,
     ParseFilePipeBuilder,
-    Post,
+    Post, Query,
     Req,
     UnauthorizedException,
     UploadedFile,
@@ -24,6 +24,8 @@ import { MimeType } from "#src/common/mime-type.enum";
 import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
 import { UserService } from "./user.service";
 import { User, UserDocument } from "./schemas/user.schema";
+import { PaginateResult } from "mongoose";
+import { UserQueryParams } from "#src/modules/user/user.interface";
 
 @ApiTags("Пользователь")
 @Controller("users")
@@ -54,8 +56,8 @@ export class UserController {
     @Roles(Role.ADMIN)
     @HttpCode(HttpStatus.OK)
     @Get("/list")
-    async list(): Promise<UserDocument[]> {
-        return await this.userService.getAll();
+    async list(@Query("queryParams") queryParams: UserQueryParams, limit: number = 10, page: number = 1): Promise<PaginateResult<UserDocument[]>> {
+        return await this.userService.getAll(queryParams, page, limit);
     }
 
     @ApiOperation({ summary: "Удаление пользователя (ADMIN)" })

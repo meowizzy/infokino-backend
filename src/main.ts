@@ -19,8 +19,8 @@ async function start() {
     app.useGlobalPipes(new ValidationPipe());
 
     const corsWhitelist = [
-        'http://localhost:3000',
-        'https://infokino.vercel.app',
+        "http://localhost:3000",
+        "https://infokino.vercel.app",
     ];
 
     app.enableCors({

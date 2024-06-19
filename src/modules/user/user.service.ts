@@ -1,17 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { FirebaseService } from "#src/common/firebase/firebase.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
-
+import { PaginateModel, PaginateResult } from "mongoose";
+import * as mongoosePaginate from "mongoose-paginate-v2";
+import { UserQueryParams } from "#src/modules/user/user.interface";
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectModel(User.name) private userModel: Model<User>,
+        @InjectModel(User.name) private userModel: PaginateModel<User>,
         private readonly firebaseService: FirebaseService,
         private readonly jwtService: JwtService
     ) {}
@@ -79,8 +80,41 @@ export class UserService {
         return await this.userModel.findByIdAndDelete(id).select("-password").exec();
     }
 
-    async getAll(): Promise<UserDocument[]> {
-        return await this.userModel.find().select("-password").exec();
+    async getAll(queryParams: UserQueryParams, page: number = 1, limit: number = 10): Promise<PaginateResult<UserDocument[]>> {
+        const sortBy = queryParams?.sortBy;
+        const sortOrder = queryParams?.sortOrder;
+        const filter = queryParams?.filter;
+        const search = queryParams?.search;
+
+        let filterQuery = {};
+
+        if (filter) {
+            filterQuery = { ...filterQuery, ...filter };
+        }
+
+        if (search) {
+            filterQuery = {
+                ...filterQuery,
+                $or: [
+                    { username: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } }
+                ] };
+        }
+
+        const sortQuery = {};
+
+        if (sortBy && sortOrder) {
+            sortQuery[sortBy] = sortOrder === "desc" ? -1 : 1;
+        }
+
+        const options = {
+            page: page,
+            limit: limit,
+            skip: limit * (page - 1),
+            sort: sortQuery
+        };
+
+        return await this.userModel.paginate(filterQuery, options);
     }
 
     async getProfile(token: string): Promise<UserDocument> {
