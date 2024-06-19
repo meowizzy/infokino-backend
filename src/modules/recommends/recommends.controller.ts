@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Param, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
 import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
@@ -12,7 +12,7 @@ import { SetRecommendsDto } from "./dto/set-recommends.dto";
 export class RecommendsController {
     constructor(private readonly recommendsService: RecommendsService) {}
 
-    @Put()
+    @Post()
     @ApiOperation({ summary: "Изменение списка жанров" })
     @ApiResponse({ status: HttpStatus.OK, type: [Recommends] })
     @HttpCode(HttpStatus.OK)

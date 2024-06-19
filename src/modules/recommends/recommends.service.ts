@@ -11,13 +11,13 @@ export class RecommendsService {
     constructor(@InjectModel(Recommends.name) private readonly recommendModel: Model<Recommends>) {}
 
     async setItems(userId: string, { items }: SetRecommendsDto) {
-        const isExist = await this.recommendModel.findOne({ userId });
+        const userRecommends = await this.recommendModel.findOne({ userId });
 
-        if (isExist) {
-            const set = new Set<string>([...items, ...isExist.items]);
-            isExist.items = Array.from(set);
-            await isExist.save();
-            return isExist;
+        if (userRecommends) {
+            userRecommends.items = items;
+
+            await userRecommends.save();
+            return userRecommends;
         }
 
         return await this.recommendModel.create({
