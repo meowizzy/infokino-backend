@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "#src/guards/auth-guard/auth-guard";
 import { GetCurrentUserId } from "#src/guards/auth-guard/auth.decorator";
@@ -18,5 +18,13 @@ export class RecommendsController {
     @HttpCode(HttpStatus.OK)
     async setRecommends(@GetCurrentUserId() userId: string, @Body() dto: SetRecommendsDto): Promise<Recommends> {
         return this.recommendsService.setItems(userId, dto);
+    }
+
+    @Get()
+    @ApiOperation({ summary: "Получить список рекоммендаций" })
+    @ApiResponse({ status: HttpStatus.OK, type: [Recommends] })
+    @HttpCode(HttpStatus.OK)
+    async getRecommends(@GetCurrentUserId() userId: string) {
+        return this.recommendsService.getItems(userId);
     }
 }
