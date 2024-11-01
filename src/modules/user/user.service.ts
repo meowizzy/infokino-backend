@@ -84,6 +84,7 @@ export class UserService {
     }
 
     async getProfile(token: string): Promise<UserDocument> {
+        console.log(token)
         const { userId } = await this.jwtService.decode(token);
 
         return await this.userModel.findById(userId).select("-password").exec();

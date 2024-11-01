@@ -37,8 +37,8 @@ export class UserController {
         description: "Bearer",
     })
     @ApiResponse({ status: HttpStatus.OK, type: User })
-    @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
     @Get("/profile")
     async profile(@Req() { headers: { authorization } }: Request): Promise<UserDocument> {
         if (!authorization) throw new UnauthorizedException();
